@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Color By Number</title>
+<style>
+    * {
+        box-sizing: border-box;
+    }
+    body {
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        background: #f9fafb;
+        margin: 0;
+        padding: 20px 15px;
+        color: #333;
+        user-select: none;
+    }
+    h1 {
+        font-weight: 700;
+        font-size: 2.8rem;
+        margin-bottom: 10px;
+        color: #2c3e50;
+        text-align: center;
+    }
+    form {
+        margin: 0 auto 40px;
+        display: inline-flex;
+        gap: 12px;
+        align-items: center;
+        justify-content: center;
+    }
+    input[type="file"] {
+        padding: 8px 12px;
+        border-radius: 6px;
+        border: 1.8px solid #bbb;
+        background-color: white;
+        font-size: 1rem;
+        cursor: pointer;
+        transition: border-color 0.2s ease;
+    }
+    input[type="file"]:hover {
+        border-color: #4a90e2;
+    }
+    button[type="submit"] {
+        padding: 9px 22px;
+        background-color: #4a90e2;
+        border: none;
+        border-radius: 6px;
+        color: white;
+        font-weight: 600;
+        font-size: 1.1rem;
+        cursor: pointer;
+        box-shadow: 0 5px 12px rgba(74, 144, 226, 0.4);
+        transition: background-color 0.3s ease;
+    }
+    button[type="submit"]:hover {
+        background-color: #357ABD;
+    }
+    .container {
+        display: flex;
+        justify-content: center;
+        align-items: flex-start;
+        gap: 30px;
+        max-width: 900px;
+        margin: 0 auto 60px;
+    }
+    .palette {
+        max-width: 140px;
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 12px;
+        justify-content: center;
+        align-content: start;
+    }
+    .palette h3 {
+        grid-column: 1 / -1;
+        font-weight: 600;
+        font-size: 1.3rem;
+        color: #34495e;
+        margin-bottom: 12px;
+        text-align: center;
+    }
+    .palette button {
+        min-width: 44px;
+        min-height: 44px;
+        border: 2px solid #ccc;
+        border-radius: 10px;
+        font-size: 1.2rem;
+        font-weight: 700;
+        cursor: pointer;
+        background-color: white;
+        color: black;
+        box-shadow: 0 2px 5px rgb(0 0 0 / 0.1);
+        transition:
+            background-color 0.25s ease,
+            border-color 0.25s ease,
+            color 0.25s ease,
+            box-shadow 0.25s ease;
+        user-select: none;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 0 12px;
+    }
+    .palette button:hover:not(.finished) {
+        border-color: #4a90e2;
+        box-shadow: 0 5px 14px rgba(74, 144, 226, 0.5);
+    }
+    .palette button.finished {
+        background-color: #e74c3c !important;
+        color: white !important;
+        border-color: #c0392b !important;
+        box-shadow: 0 0 15px #e74c3c;
+        cursor: default;
+    }
+    .palette button.selected {
+        outline: 3px solid #2980b9;
+        outline-offset: 2px;
+    }
+    .grid {
+        border-radius: 12px;
+        padding: 8px;
+        background: white;
+        box-shadow: 0 12px 30px rgb(0 0 0 / 0.07);
+        user-select: none;
+    }
+    .row {
+        display: flex;
+        justify-content: center;
+    }
+    .cell {
+        width: 40px;
+        height: 40px;
+        background: #d1d5db;
+        font-size: 18px;
+        line-height: 40px;
+        font-weight: 700;
+        border: 1.7px solid #bbb;
+        text-align: center;
+        color: #222;
+        cursor: pointer;
+        margin: 0;
+        transition: background-color 0.3s ease, border 0.3s ease;
+        box-shadow: inset 0 0 5px rgb(0 0 0 / 0.06);
+        user-select: none;
+    }
+    .cell:hover {
+        border-color: #4a90e2;
+        box-shadow: 0 0 6px #4a90e2;
+    }
+    .cell.highlight {
+        background-color: #a0aec0 !important;
+        border-color: #718096 !important;
+        color: #111;
+    }
+    .cell.filled {
+        border: none;
+        box-shadow: none;
+        cursor: default;
+    }
+</style>
+</head>
+<body>
+    <h1>🎨 Color By Number</h1>
+
+    <form method="POST" enctype="multipart/form-data">
+        <input type="file" name="image" accept="image/*" required />
+        <button type="submit">Upload</button>
+    </form>
+
+    {% if colors %}
+    <div class="container">
+        <div class="palette" aria-label="Number selection palette">
+            <h3>Choose a number:</h3>
+            {% for num, color in colors.items() %}
+                <button
+                    data-number="{{ num }}"
+                    style="background-color: '{{ color }}';"
+                    type="button"
+                >
+                    {{ num }}
+                </button>
+            {% endfor %}
+        </div>
+
+        <div class="grid" aria-label="Color by number grid">
+            {% for row in grid %}
+                <div class="row">
+                    {% for cell in row %}
+                        <div
+                            class="cell"
+                            data-number="{{ cell }}"
+                            data-color="{{ colors[cell] }}"
+                            role="button"
+                            tabindex="0"
+                            aria-label="Cell number {{ cell }}"
+                        >
+                            {{ cell }}
+                        </div>
+                    {% endfor %}
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+    {% endif %}
+
+<script>
+    let selectedNumber = null;
+    const filledCounts = {};
+    const totalCounts = {};
+    let isDragging = false;
+
+    document.querySelectorAll('.cell').forEach(cell => {
+        const num = cell.dataset.number;
+        totalCounts[num] = (totalCounts[num] || 0) + 1;
+    });
+
+    const buttons = document.querySelectorAll('.palette button');
+
+    buttons.forEach(button => {
+        button.addEventListener('click', (e) => {
+            e.preventDefault();
+            buttons.forEach(btn => btn.classList.remove('selected'));
+            selectedNumber = button.dataset.number;
+            button.classList.add('selected');
+            document.querySelectorAll('.cell').forEach(cell => {
+                if (cell.dataset.number === selectedNumber && cell.textContent !== '') {
+                    cell.classList.add('highlight');
+                } else {
+                    cell.classList.remove('highlight');
+                }
+            });
+        });
+    });
+
+    function fillCell(cell) {
+        if (!selectedNumber) return;
+        if (cell.dataset.number === selectedNumber && cell.textContent !== '') {
+            cell.style.backgroundColor = cell.dataset.color;
+            cell.textContent = '';
+            cell.classList.remove('highlight');
+            cell.classList.add('filled');
+            cell.style.border = 'none';
+            filledCounts[selectedNumber] = (filledCounts[selectedNumber] || 0) + 1;
+            if (filledCounts[selectedNumber] === totalCounts[selectedNumber]) {
+                buttons.forEach(btn => {
+                    if (btn.dataset.number === selectedNumber) {
+                        btn.classList.add('finished');
+                        btn.classList.remove('selected');
+                    }
+                });
+                selectedNumber = null;
+                document.querySelectorAll('.cell.highlight').forEach(c => c.classList.remove('highlight'));
+            }
+        }
+    }
+
+    document.querySelectorAll('.cell').forEach(cell => {
+        cell.addEventListener('click', () => {
+            fillCell(cell);
+        });
+
+        cell.addEventListener('mousedown', () => {
+            isDragging = true;
+            fillCell(cell);
+        });
+
+        cell.addEventListener('mouseover', () => {
+            if (isDragging) {
+                fillCell(cell);
+            }
+        });
+
+        cell.addEventListener('mouseup', () => {
+            isDragging = false;
+        });
+
+        // Touch support
+        cell.addEventListener('touchstart', (e) => {
+            e.preventDefault();
+            fillCell(cell);
+        }, {passive: false});
+
+        cell.addEventListener('touchmove', (e) => {
+            e.preventDefault();
+            const touch = e.touches[0];
+            const el = document.elementFromPoint(touch.clientX, touch.clientY);
+            if (el && el.classList.contains('cell')) {
+                fillCell(el);
+            }
+        }, {passive: false});
+    });
+
+    document.body.addEventListener('mouseup', () => {
+        isDragging = false;
+    });
+</script>
+</body>
+</html>
