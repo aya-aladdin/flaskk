@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Color By Number</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+  <h1>🎨 Color By Number</h1>
+
+  <form method="POST" enctype="multipart/form-data">
+    <input type="file" name="image" accept="image/*" required />
+    <button type="submit">Upload</button>
+  </form>
+
+  {% if colors %}
+  <div class="container">
+    <div class="palette" aria-label="Number selection palette">
+      <h3>Choose a number:</h3>
+      {% for num, color in colors.items() %}
+      <button
+        data-number="{{ num }}"
+        style="background-color: '{{ color }}';"
+        type="button"
+      >
+        {{ num }}
+      </button>
+      {% endfor %}
+    </div>
+
+    <div class="grid" aria-label="Color by number grid">
+      {% for row in grid %}
+      <div class="row">
+        {% for cell in row %}
+        <div
+          class="cell"
+          data-number="{{ cell }}"
+          data-color="{{ colors[cell] }}"
+          role="button"
+          tabindex="0"
+          aria-label="Cell number {{ cell }}"
+        >
+          {{ cell }}
+        </div>
+        {% endfor %}
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+  {% endif %}
+
+  <script src="{{ url_for('static', filename='script.js') }}"></script>
+</body>
+</html>

@@ -1,11 +1,12 @@
 from flask import Flask, render_template, request
+from waitress import serve
 from PIL import Image
 import math
 
 app = Flask(__name__)
 
 def round_color(color, factor=50):
-    return tuple((round(c / factor) * factor for c in color))
+  return tuple(min(255, max(0, round(c / factor) * factor)) for c in color)
 
 def process_image(file, size=(23, 23), round_factor=50):
     img = Image.open(file).convert('RGB')
@@ -38,3 +39,5 @@ def index():
             return render_template('index.html', grid=grid, colors=colors)
     return render_template('index.html', grid=None, colors=None)
 
+if __name__ == '__main__':
+    serve(app, host='0.0.0.0', port=8080)
